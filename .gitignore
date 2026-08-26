@@ -1,0 +1,57 @@
+# ─────────────────────────────────────────────────────────────
+# Teaching workspace — course material, not part of the codebase.
+# Generated and maintained by the /teach workflow. Stays on disk,
+# never tracked.
+# ─────────────────────────────────────────────────────────────
+MISSION.md
+NOTES.md
+RESOURCES.md
+lesson.css
+lessons/
+reference/
+learning-records/
+
+# Purchased books and any other reading material
+books/
+*.pdf
+*.epub
+*.mobi
+*.azw3
+*.djvu
+
+# ─────────────────────────────────────────────────────────────
+# Go
+# ─────────────────────────────────────────────────────────────
+# Compiled binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test and profiling output
+*.test
+*.out
+*.prof
+coverage.*
+cpu.out
+mem.out
+
+# Go workspace files (per-machine, not shared)
+go.work
+go.work.sum
+
+# Dependency vendoring — enable only if you deliberately vendor
+vendor/
+
+# ─────────────────────────────────────────────────────────────
+# Editors and OS
+# ─────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
