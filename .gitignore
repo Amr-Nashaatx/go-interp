@@ -1,15 +1,4 @@
-# ─────────────────────────────────────────────────────────────
-# Teaching workspace — course material, not part of the codebase.
-# Generated and maintained by the /teach workflow. Stays on disk,
-# never tracked.
-# ─────────────────────────────────────────────────────────────
-MISSION.md
-NOTES.md
-RESOURCES.md
-lesson.css
-lessons/
-reference/
-learning-records/
+learning-workspace/
 
 # Purchased books and any other reading material
 books/
