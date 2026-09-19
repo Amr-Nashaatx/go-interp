@@ -51,6 +51,12 @@ const (
 	IDENT  TokenType = "IDENT"
 	NUMBER TokenType = "NUMBER"
 	EOF    TokenType = "EOF"
+
+	// ILLEGAL carries a character the scanner could not match. It is a token
+	// rather than an error so that scanning continues past bad input and the
+	// consumer has one channel to read from, not two. Its lexeme is the
+	// offending text.
+	ILLEGAL TokenType = "ILLEGAL"
 )
 
 // symbols holds every punctuation mark and operator, of any length. This is the

@@ -1,8 +1,6 @@
 package scanner
 
 import (
-	"fmt"
-
 	"github.com/Amr-Nashaatx/go-interp/token"
 )
 
@@ -93,13 +91,13 @@ func New(content string) *Scanner {
 	return &scanner
 }
 
-func (s *Scanner) NextToken() (*token.Token, error) {
+func (s *Scanner) NextToken() *token.Token {
 	// Eat(ignore) all white spaces and comments, and leave the start pointer s.start just before the next token
 	s.skipWsAndComments()
 
 	// Did we consume all source string?
 	if s.curr >= len(s.src)-1 {
-		return token.EOFToken, nil
+		return token.EOFToken
 	}
 
 	// Check first 2 character symbols (maximum-munch)
@@ -108,7 +106,7 @@ func (s *Scanner) NextToken() (*token.Token, error) {
 	if ok {
 		s.advance()
 		s.advance()
-		return token.New(t, symbol), nil
+		return token.New(t, symbol)
 	}
 
 	// If lookup of 2 character symbol failed, we try 1 character symbol
@@ -116,7 +114,7 @@ func (s *Scanner) NextToken() (*token.Token, error) {
 	t, ok = token.LookupSymbol(symbol)
 	if ok {
 		s.advance()
-		return token.New(t, symbol), nil
+		return token.New(t, symbol)
 	}
 
 	var scanned string
@@ -124,14 +122,18 @@ func (s *Scanner) NextToken() (*token.Token, error) {
 	// in which case the result could be a keyword so we check for this condition.
 	if token.IsLetter(s.peek()) || s.peek() == '_' {
 		scanned = s.scanIdentifier()
-		return token.New(token.LookupIdent(scanned), scanned), nil
+		return token.New(token.LookupIdent(scanned), scanned)
 	}
 
 	// if the peeked character is a digit we scan for a number
 	if token.IsDigit(s.peek()) {
 		scanned = s.scanNumber()
-		return token.New(token.NUMBER, scanned), nil
+		return token.New(token.NUMBER, scanned)
 	}
 
-	return nil, fmt.Errorf("could not match token")
+	// Nothing matched. Emit the character as ILLEGAL and consume it — without
+	// advancing, every caller would loop forever on the same byte.
+	bad := string(s.peek())
+	s.advance()
+	return token.New(token.ILLEGAL, bad)
 }

@@ -39,11 +39,7 @@ func TestScanner(t *testing.T) {
 
 	got := make([]token.Token, 20)
 	for range len(want) {
-		tok, err := s.NextToken()
-
-		if err != nil {
-			t.Fatalf("Error extracting token %q", err)
-		}
+		tok := s.NextToken()
 		got = append(got, *token.New(tok.Type, tok.Lexeme))
 	}
 

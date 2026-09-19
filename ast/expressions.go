@@ -50,8 +50,10 @@ func (pf *PrefixExpression) Anchor() *token.Token {
 func (pf *PrefixExpression) String() string {
 	var builder strings.Builder
 
+	builder.WriteString("(")
 	builder.WriteString(pf.Operator)
 	builder.WriteString(pf.Right.String())
+	builder.WriteString(")")
 
 	return builder.String()
 }

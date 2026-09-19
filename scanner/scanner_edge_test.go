@@ -20,12 +20,9 @@ func scanAll(t *testing.T, src string) []token.Token {
 
 	const maxTokens = 1000
 	for range maxTokens {
-		tok, err := s.NextToken()
-		if err != nil {
-			t.Fatalf("unexpected error after %d tokens: %v", len(got), err)
-		}
+		tok := s.NextToken()
 		if tok == nil {
-			t.Fatalf("NextToken returned a nil token and a nil error after %d tokens", len(got))
+			t.Fatalf("NextToken returned a nil token after %d tokens", len(got))
 		}
 
 		got = append(got, *tok)
@@ -420,12 +417,9 @@ func TestEOFIsRepeatable(t *testing.T) {
 	s := New("x")
 
 	for i := range 5 {
-		tok, err := s.NextToken()
-		if err != nil {
-			t.Fatalf("call %d: unexpected error: %v", i, err)
-		}
+		tok := s.NextToken()
 		if tok == nil {
-			t.Fatalf("call %d: nil token with nil error", i)
+			t.Fatalf("call %d: nil token", i)
 		}
 		if i == 0 {
 			if tok.Type != token.IDENT {
@@ -441,27 +435,34 @@ func TestEOFIsRepeatable(t *testing.T) {
 
 // --- unknown characters ---------------------------------------------------
 
-// Documents the current contract: an unrecognised character is reported as an
-// error. Worth revisiting in the error-recovery lesson — a real scanner reports
-// many bad characters rather than stopping at the first.
+// An unrecognised character comes back as an ILLEGAL token carrying the
+// character, and scanning continues. Two bad characters therefore produce two
+// tokens rather than stopping at the first.
 func TestUnknownCharacterIsReported(t *testing.T) {
-	for _, src := range []string{"@", "a @ b", "#"} {
-		t.Run(src, func(t *testing.T) {
-			s := New(src)
+	cases := []struct {
+		src  string
+		want []token.Token
+	}{
+		{"@", []token.Token{
+			{Type: token.ILLEGAL, Lexeme: "@"},
+			*token.EOFToken,
+		}},
+		{"a @ b", []token.Token{
+			{Type: token.IDENT, Lexeme: "a"},
+			{Type: token.ILLEGAL, Lexeme: "@"},
+			{Type: token.IDENT, Lexeme: "b"},
+			*token.EOFToken,
+		}},
+		{"@#", []token.Token{
+			{Type: token.ILLEGAL, Lexeme: "@"},
+			{Type: token.ILLEGAL, Lexeme: "#"},
+			*token.EOFToken,
+		}},
+	}
 
-			for range 100 {
-				tok, err := s.NextToken()
-				if err != nil {
-					return // expected
-				}
-				if tok == nil {
-					t.Fatal("nil token with nil error")
-				}
-				if tok.Type == token.EOF {
-					t.Fatalf("reached EOF without reporting the bad character in %q", src)
-				}
-			}
-			t.Fatalf("scanner did not terminate on %q", src)
+	for _, c := range cases {
+		t.Run(c.src, func(t *testing.T) {
+			assertTokens(t, c.src, c.want)
 		})
 	}
 }
