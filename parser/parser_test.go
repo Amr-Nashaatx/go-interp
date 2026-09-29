@@ -10,6 +10,7 @@ import (
 // Both strategies must build the same tree from the same source.
 var strategies = map[string]parser.Strategy{
 	"descent": parser.Descent,
+	"pratt":   parser.Pratt,
 }
 
 func TestParseExpression(t *testing.T) {
