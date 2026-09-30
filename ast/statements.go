@@ -46,7 +46,7 @@ func (rs *ReturnStatement) String() string {
 
 	builder.WriteString("return ")
 	builder.WriteString(rs.Value.String())
-
+	builder.WriteString(";")
 	return builder.String()
 }
 
@@ -66,5 +66,33 @@ func (es *ExpressionStatement) String() string {
 	builder.WriteString(es.Value.String())
 	builder.WriteString(";")
 
+	return builder.String()
+}
+
+type Block struct {
+	Token      *token.Token
+	Statements []Statement
+}
+
+func (blk *Block) statementNode() {}
+
+func (blk *Block) Add(stmt Statement) {
+	blk.Statements = append(blk.Statements, stmt)
+}
+
+func (blk *Block) Anchor() *token.Token {
+	return blk.Token
+}
+
+func (blk *Block) String() string {
+	var builder strings.Builder
+
+	builder.Write([]byte("{"))
+	for _, stmt := range blk.Statements {
+		builder.Write([]byte(" "))
+		builder.Write([]byte(stmt.String()))
+	}
+
+	builder.Write([]byte(" }"))
 	return builder.String()
 }

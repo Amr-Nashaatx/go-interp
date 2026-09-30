@@ -78,23 +78,23 @@ func (p *pratt) bindingPower(opType string) (int, int) {
 	}
 }
 func (p *pratt) parsePrefix(pars *Parser) ast.Expression {
-	if pars.expect(token.NUMBER) {
+	if pars.check(token.NUMBER) {
 		tok := pars.consume()
 		n, _ := strconv.ParseFloat(tok.Lexeme, 32)
 		return &ast.NumberLiteral{Token: tok, Value: float32(n)}
 
-	} else if pars.expect(token.IDENT) {
+	} else if pars.check(token.IDENT) {
 		tok := pars.consume()
 		return &ast.Identifier{Token: tok, Name: tok.Lexeme}
-	} else if pars.expect(token.LEFT_PAREN) {
+	} else if pars.check(token.LEFT_PAREN) {
 		pars.consume()
 		exp := p.expression(pars)
-		if !pars.expect(token.RIGHT_PAREN) {
+		if !pars.check(token.RIGHT_PAREN) {
 			panic("Invalid syntax expected a ')'")
 		}
 		pars.consume()
 		return exp
-	} else if pars.expect(token.NEGATE) || pars.expect(token.MINUS) {
+	} else if pars.check(token.NEGATE) || pars.check(token.MINUS) {
 		tok := pars.consume()
 		return &ast.PrefixExpression{Token: tok, Operator: tok.Lexeme, Right: p.parseExpression(pars, 9)}
 	} else {
